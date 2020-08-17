@@ -6,25 +6,37 @@ const getLyric = (artist, title, id, randomId) =>{
     const setLyric = data => {
         if(data.lyrics != undefined){
             const lyric = data.lyrics;
+            const randomId2 = Math.random()*10000;
             console.log(lyric);
             document.getElementById(randomId).innerText = 'Song Lyrics:';
-            document.getElementById(id).innerText = lyric;
+
+            document.getElementById(id).innerHTML = "";
+            document.getElementById(id).innerHTML = `<div id="${randomId2}" class="text-center alert alert-success my-3 py-3"></div>`;
+            document.getElementById(randomId2).innerText = lyric;
         }else{
-            document.getElementById(randomId).innerText = 'Lyrics not found';
+            document.getElementById(randomId).innerHTML = `<div class="alert alert-danger">Lyrics not found</div>`;
         }
     }
 }
 
 const gitLyricsList = (artist, title) =>{
-    fetch('https://api.lyrics.ovh/v1/'+artist+'/'+title+'')
-    .then(e => e.json())
-    .then(d => displayLyric(d));
-    
-    const displayLyric = lyric => {
-
-        document.getElementById('songNameDisplay').innerText = title;
-        document.getElementById('displayLyric').innerText = lyric.lyrics;
-    }
+        fetch('https://api.lyrics.ovh/v1/'+artist+'/'+title+'')
+        .then(e => e.json())
+        .then(d => displayLyric(d));
+            const displayLyric = data => {
+                const lyric = data.lyrics;
+                if(lyric){     
+                    document.getElementById('songName').innerText = title;
+                    document.getElementById('space').innerText = ' - ';
+                    document.getElementById('artistName').innerText = artist;
+                    document.getElementById('displayLyric').innerText = lyric;
+                }else{
+                    document.getElementById('songName').innerText = title;
+                    document.getElementById('space').innerText = ' - ';
+                    document.getElementById('artistName').innerText = artist;
+                    document.getElementById('displayLyric').innerText = 'Lyric not found';
+                }
+            }
 }
 
 document.getElementById('searchBtn').addEventListener('click', function(){
@@ -38,8 +50,6 @@ document.getElementById('searchBtn').addEventListener('click', function(){
     songList.innerHTML='';
     singleResult.innerHTML='';
     const setData = data => {
-        // const songName = data.map(d => d.title);
-        // console.log(data.data[0].title);
         for(let i = 0; i < 11; i++){
             const id = data.data[i].id;
             const title = data.data[i].title;
@@ -57,16 +67,29 @@ document.getElementById('searchBtn').addEventListener('click', function(){
                 <img class="h-100 mr-5" src="${picture}" alt="">
                 <div class="details">
                     <h3 class="lyrics-name">${title}</h3>
-                    <p class="author lead">Album by <span>${artist}</span></p>
+                    <p class="author lead">Album by <span style="font-weight: 700">${artist}</span></p>
                 </div>
             </div>
             <div class="col-md-3 text-md-right text-center">
+                <div class="d-flex flex-column">
                 <button class="btn btn-success" onclick="getLyric('${artist}', '${title}', '${id}' , '${randomId}')">Get Lyrics</button>
+                </div>
             </div>
             </div>
-            <h3 id="${randomId}" class="text-center"></h3>
+            <div id="${randomId}" class="text-center"></div>
             <div id="${id}" class="text-center"></div>
             `
         }
     }
 })
+
+
+
+
+
+
+
+
+
+
+
